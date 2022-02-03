@@ -7,9 +7,11 @@ public class Grabber : MonoBehaviour {
     [Space] [SerializeField] private Transform item;
 
     [SerializeField] private LayerMask layerMask;
+    [Space] [SerializeField] private Material highlightMaterial;
 
 
-    private RaycastHit _hit;
+    [Header("Highlight")] private Material _previousMaterial;
+    private Renderer _selection;
 
     private void Update() {
         if (Input.GetMouseButtonDown(0)) {
@@ -18,20 +20,38 @@ public class Grabber : MonoBehaviour {
                 return;
             }
 
-            if (Physics.Raycast(cam.position, cam.TransformDirection(Vector3.forward), out _hit, MAXDistance, layerMask)) {
-                if (!_hit.collider.CompareTag("Item")) return;
-                GrabItem(_hit.collider.transform);
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, MAXDistance, layerMask)) {
+                if (!hit.collider.CompareTag("Item")) return;
+                GrabItem(hit.collider.transform);
             }
+        }
+
+        HighlightItem();
+    }
+
+
+    private void HighlightItem() {
+        if (_selection != null) {
+            _selection.material = _previousMaterial;
+            _selection = null;
+        }
+
+
+        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, MAXDistance, layerMask)) {
+            if (!hit.collider.CompareTag("Item")) return;
+
+            Renderer selectedRenderer = hit.transform.GetComponent<Renderer>();
+            if (selectedRenderer != null) {
+                _previousMaterial = selectedRenderer.material;
+                selectedRenderer.material = highlightMaterial;
+            }
+
+            _selection = selectedRenderer;
         }
     }
 
-    private void OnDrawGizmos() {
-        if (_hit.collider != null)
-            Gizmos.DrawSphere(_hit.point, .1f);
-    }
-
     /// <summary>
-    /// grab the item
+    ///     grab the item
     /// </summary>
     /// <param name="target">transform of the item to select</param>
     private void GrabItem(Transform target) {
@@ -45,7 +65,7 @@ public class Grabber : MonoBehaviour {
     }
 
     /// <summary>
-    /// drop the item
+    ///     drop the item
     /// </summary>
     private void DropItem() {
         Rigidbody rb = item.GetComponent<Rigidbody>();

@@ -47,12 +47,22 @@ public class FpsController : MonoBehaviour {
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
     }
 
+
+
     /// <summary>
     /// lock the cursor to the center of the screen
     /// </summary>
-    private static void LockCursor() {
+    public static void LockCursor() {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    /// <summary>
+    /// lock the cursor to the center of the screen
+    /// </summary>
+    public static void UnlockCursor() {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void ApplyGravity() {
