@@ -14,19 +14,40 @@ public class Grabber : MonoBehaviour {
     private Renderer _selection;
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0)) {
-            if (item != null) {
-                DropItem();
-                return;
-            }
-
-            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, MAXDistance, layerMask)) {
-                if (!hit.collider.CompareTag("Item")) return;
-                GrabItem(hit.collider.transform);
-            }
+        if (_selection != null) {
+            _selection.material = _previousMaterial;
+            _selection = null;
         }
 
-        HighlightItem();
+        if (Input.GetMouseButtonDown(0) && item != null) {
+            DropItem();
+        }
+
+
+        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, MAXDistance, layerMask)) {
+            if (!hit.collider.CompareTag("Item")) return;
+
+            if (Input.GetMouseButtonDown(0)) {
+                if (item != null) {
+                    DropItem();
+                    return;
+                }
+
+                GrabItem(hit.collider.transform);
+            }
+
+
+            Renderer selectedRenderer = hit.transform.GetComponent<Renderer>();
+            if (selectedRenderer != null) {
+                _previousMaterial = selectedRenderer.material;
+                selectedRenderer.material = highlightMaterial;
+            }
+
+            _selection = selectedRenderer;
+        }
+
+
+        // HighlightItem();
     }
 
 
