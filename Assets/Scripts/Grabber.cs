@@ -14,6 +14,7 @@ public class Grabber : MonoBehaviour {
     private Renderer _selection;
 
     private void Update() {
+        // Highlight
         if (_selection != null) {
             _selection.material = _previousMaterial;
             _selection = null;
@@ -27,40 +28,13 @@ public class Grabber : MonoBehaviour {
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, MAXDistance, layerMask)) {
             if (!hit.collider.CompareTag("Item")) return;
 
+
             if (Input.GetMouseButtonDown(0)) {
-                if (item != null) {
-                    DropItem();
-                    return;
-                }
-
-                GrabItem(hit.collider.transform);
+                if (item == null) GrabItem(hit.collider.transform);
             }
 
 
-            Renderer selectedRenderer = hit.transform.GetComponent<Renderer>();
-            if (selectedRenderer != null) {
-                _previousMaterial = selectedRenderer.material;
-                selectedRenderer.material = highlightMaterial;
-            }
-
-            _selection = selectedRenderer;
-        }
-
-
-        // HighlightItem();
-    }
-
-
-    private void HighlightItem() {
-        if (_selection != null) {
-            _selection.material = _previousMaterial;
-            _selection = null;
-        }
-
-
-        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, MAXDistance, layerMask)) {
-            if (!hit.collider.CompareTag("Item")) return;
-
+            // Highlight
             Renderer selectedRenderer = hit.transform.GetComponent<Renderer>();
             if (selectedRenderer != null) {
                 _previousMaterial = selectedRenderer.material;
@@ -70,6 +44,7 @@ public class Grabber : MonoBehaviour {
             _selection = selectedRenderer;
         }
     }
+
 
     /// <summary>
     ///     grab the item
