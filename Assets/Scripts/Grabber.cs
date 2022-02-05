@@ -22,6 +22,7 @@ public class Grabber : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0) && item != null) {
             DropItem();
+            return;
         }
 
 
